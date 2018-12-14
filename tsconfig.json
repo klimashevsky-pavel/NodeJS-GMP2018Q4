@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+        "noEmitOnError": true,
+        "allowSyntheticDefaultImports": true,
+        "outDir": "./dist/",
+        "baseUrl": "./src/",
+        "sourceMap": true,
+        "module": "commonjs",
+        "target": "es5",
+    },
+    "include": [
+        "src/**/*"
+    ],
+    "exclude": [
+        "node_modules"
+    ]
+}
