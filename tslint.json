@@ -10,7 +10,9 @@
         "ordered-imports": false,
         "trailing-comma": false,
         "no-var-requires": false,
-        "object-literal-sort-keys": false
+        "object-literal-sort-keys": false,
+        "arrow-parens": false,
+        "only-arrow-functions": false
     },
     "rulesDirectory": []
 }

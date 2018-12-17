@@ -7,7 +7,7 @@
     "precommit": "lint-staged",
     "test": "echo \"Error: no test specified\" && exit 1",
     "prettier": "prettier --write ./src/**/*.ts",
-    "build": "webpack --mode=production",
+    "build": "webpack --mode=development",
     "server-prod": "nodemon dist/index.js",
     "start": "npm run build && npm run server-prod"
   },
@@ -40,6 +40,8 @@
   },
   "dependencies": {
     "@types/node": "^10.12.11",
-    "app-module-path": "^2.2.0"
+    "app-module-path": "^2.2.0",
+    "csvtojson": "^2.0.8",
+    "winston": "^3.1.0"
   }
 }
