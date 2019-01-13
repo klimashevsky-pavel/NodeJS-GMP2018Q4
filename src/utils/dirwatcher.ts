@@ -5,14 +5,14 @@ import logger from '../../logger';
 import { DIRECTORY_FILES_CHANGED } from 'constants/EventNames';
 
 export default class DirWatcher extends EventEmitter {
-    private changedFiles = [];
     private allFilesInDirectoryStats = {};
+    private watchTimer;
 
     public watch(dirPath: string, delay: number) {
-        setInterval(() => this.readDirectory(dirPath), delay);
+        this.watchTimer = setInterval(() => this.checkDirectoryChanges(dirPath), delay);
     }
 
-    private readDirectory(dirPath: string) {
+    private checkDirectoryChanges(dirPath: string) {
         fs.readdir(dirPath, this.getReadDirectoryCallback(dirPath));
     }
 
@@ -35,10 +35,10 @@ export default class DirWatcher extends EventEmitter {
             });
 
             Promise.all(promises)
-                .then(() => {
-                    if (this.changedFiles.length) {
-                        this.emit(DIRECTORY_FILES_CHANGED, this.changedFiles);
-                        this.changedFiles = [];
+                .then(data => {
+                    const changedFiles = data.filter(Boolean);
+                    if (changedFiles) {
+                        this.emit(DIRECTORY_FILES_CHANGED, changedFiles);
                     }
                 })
                 .catch(e => {
@@ -49,7 +49,7 @@ export default class DirWatcher extends EventEmitter {
 
     private getFileChangesCheckCallback(
         fileName: string,
-        resolveFunc: () => void,
+        resolveFunc: (fileName?) => void,
         rejectFunc: (err: Error) => void
     ) {
         return (err: Error, fileStat) => {
@@ -62,7 +62,7 @@ export default class DirWatcher extends EventEmitter {
                 this.allFilesInDirectoryStats[fileName].mtime.getTime() !== fileStat.mtime.getTime()
             ) {
                 this.allFilesInDirectoryStats[fileName] = fileStat;
-                this.changedFiles.push(fileName);
+                resolveFunc(fileName);
             }
             resolveFunc();
         };
