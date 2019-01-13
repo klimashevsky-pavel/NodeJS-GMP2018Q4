@@ -10,6 +10,9 @@ module.exports = {
         filename: 'index.js',
         path: path.resolve(__dirname, 'dist')
     },
+    node: {
+        __dirname: true
+    },
     module: {
         rules: [
             {
