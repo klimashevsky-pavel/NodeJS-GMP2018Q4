@@ -96,16 +96,16 @@ function transformStringData(chunk, enc, next) {
     next();
 }
 
-function showHelpMessage(): void {
-    showMessage(helpMessage);
+function exitWithHelpMessage(): void {
+    exitWithMessage(helpMessage);
 }
 
-function showMessageWithAdditions(message: string): void {
+function exitWithMessageWithAdditions(message: string): void {
     const messageWithAdditions = addAdditionalInfoToMessage(message);
-    showMessage(messageWithAdditions);
+    exitWithMessage(messageWithAdditions);
 }
 
-function showMessage(message: string): void {
+function exitWithMessage(message: string): void {
     console.log(message);
     process.exit();
 }
@@ -122,7 +122,7 @@ function specifyArgumentsForAction(args: object, actionType: string): string[] {
     const actionsArgs = actionTypeArgs.reduce((acc, item) => {
         const argument = args[item.argName] || args[item.argNameShort];
         if (!argument) {
-            showMessageWithAdditions(wrongArguments);
+            exitWithMessageWithAdditions(wrongArguments);
         }
         acc.push(argument);
         return acc;
@@ -141,7 +141,7 @@ function callAction(args: object): void {
         const actionArgs = specifyArgumentsForAction(args, actionType);
         action.apply(null, actionArgs);
     } else {
-        showMessageWithAdditions(wrongActionNameMessage);
+        exitWithMessageWithAdditions(wrongActionNameMessage);
     }
 }
 
@@ -159,7 +159,7 @@ function outputFile(fileName: string) {
     }
     const filePath = path.resolve(__dirname, fileName);
     const readFileStream = fs.createReadStream(filePath).on('error', e => {
-        showMessage(e);
+        exitWithMessage(e);
     });
     readFileStream.pipe(process.stdout);
 }
@@ -173,7 +173,7 @@ function convertFromFile(fileName: string) {
         .createReadStream(filePath)
         .pipe(csv())
         .on('error', e => {
-            showMessage(e);
+            exitWithMessage(e);
         });
     csvToConsole.pipe(process.stdout);
 }
@@ -193,37 +193,41 @@ function convertToFile(fileName: string) {
         .pipe(csv())
         .pipe(fs.createWriteStream(newFilePath))
         .on('error', e => {
-            showMessage(e);
+            exitWithMessage(e);
         });
 }
 
 function cssBundler(dirPath: string) {
-    const cssReadStreams = [];
     fs.readdir(dirPath, (err, fileNames) => {
         if (err) {
-            showMessage(err);
+            exitWithMessage(err);
         }
         const cssFileNames = fileNames.filter(fileName => path.extname(fileName) === cssExtension);
-        cssFileNames.forEach(cssFileName => {
-            const cssFilePath = path.resolve(dirPath, cssFileName);
-            cssReadStreams.push(fs.createReadStream(cssFilePath));
-        });
-
-        const endCssFilePath = path.resolve(dirPath, '../nodejs-homework3.css');
-        cssReadStreams.push(fs.createReadStream(endCssFilePath));
-
-        const bundleCssPath = path.resolve(dirPath, 'bundle.css');
-        multistream(cssReadStreams).pipe(fs.createWriteStream(bundleCssPath));
+        bundelCSS(dirPath, cssFileNames);
     });
+}
+
+function bundelCSS(dirPath: string, cssFileNames: string[]) {
+    const cssReadStreams = [];
+    cssFileNames.forEach(cssFileName => {
+        const cssFilePath = path.resolve(dirPath, cssFileName);
+        cssReadStreams.push(fs.createReadStream(cssFilePath));
+    });
+
+    const endCssFilePath = path.resolve(dirPath, '../nodejs-homework3.css');
+    cssReadStreams.push(fs.createReadStream(endCssFilePath));
+
+    const bundleCssPath = path.resolve(dirPath, 'bundle.css');
+    multistream(cssReadStreams).pipe(fs.createWriteStream(bundleCssPath));
 }
 
 function main(): void {
     const args = argsParser(process.argv.slice(2));
     const firstArgument = Object.keys(args)[1]; // arguments start from second item in object
     if (firstArgument === argsConfig.HELP && args[argsConfig.HELP]) {
-        showHelpMessage();
+        exitWithHelpMessage();
     } else if (!args[argsConfig.ACTION_SHORT] && !args[argsConfig.ACTION]) {
-        showMessageWithAdditions(specifyActionMessage);
+        exitWithMessageWithAdditions(specifyActionMessage);
     } else {
         callAction(args);
     }
