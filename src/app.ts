@@ -1,10 +1,10 @@
 import * as express from 'express';
 import * as bodyParser from 'body-parser';
-import cookieParser from 'cookie-parser';
 import errorHandler from 'errorhandler';
 import runWatchers from 'utils/runWatcher';
 import { addRoutes } from 'utils/addRoutes';
 import { queryParser } from 'middlewares/queryParser';
+import { cookieParser } from 'middlewares/cookieParser';
 
 // http servers
 import 'http-servers/plain-text-server';
@@ -35,13 +35,13 @@ class Server {
 
     private configureServer(): void {
         this.app.use(queryParser);
+        this.app.use(cookieParser);
         this.app.use(bodyParser.json());
         this.app.use(
             bodyParser.urlencoded({
                 extended: true
             })
         );
-        this.app.use(cookieParser());
         this.configureRoutes();
         this.app.use(errorHandler());
     }
