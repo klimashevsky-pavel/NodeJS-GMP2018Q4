@@ -12,7 +12,8 @@
         "no-var-requires": false,
         "object-literal-sort-keys": false,
         "arrow-parens": false,
-        "only-arrow-functions": false
+        "only-arrow-functions": false,
+        "interface-name": [true, "never-prefix"]
     },
     "rulesDirectory": []
 }
