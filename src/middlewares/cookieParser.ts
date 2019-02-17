@@ -8,6 +8,7 @@ const cookieParser = (req: ExtendedRequest, res: Response, next: () => void) => 
 };
 
 const parseCookies = (cookieString: string): object => {
+    if (!cookieString) return {};
     const cookiesArray = cookieString.split('; ');
     const result = cookiesArray.reduce((acc, cookie) => {
         const splitedCookie = cookie.split('=');
