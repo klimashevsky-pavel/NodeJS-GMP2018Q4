@@ -4,7 +4,7 @@ const SRC_PATH = path.resolve(__dirname, './src');
 const NODE_MODULES_PATH = path.resolve(__dirname, './node_modules');
 
 module.exports = {
-    entry: './src/app.ts',
+    entry: './src/index.ts',
     target: 'node',
     output: {
         filename: 'index.js',

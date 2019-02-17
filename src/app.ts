@@ -1,45 +1,59 @@
-import path from 'path';
-import logger from '../logger';
-import { User, Product } from 'models';
-import DirWatcher from 'utils/dirwatcher';
-import Importer from 'utils/importer';
-import csvConverter from 'utils/csvConverter';
-import { DIRECTORY_FILES_CHANGED } from 'constants/EventNames';
+import * as express from 'express';
+import * as bodyParser from 'body-parser';
+import errorHandler from 'errorhandler';
+import runWatchers from 'utils/runWatcher';
+import { addRoutes } from 'utils/addRoutes';
+import { queryParser } from 'middlewares/queryParser';
+import { cookieParser } from 'middlewares/cookieParser';
 
-const PATH_TO_DATA = path.join(__dirname, '../data');
-const WATCH_DELAY_MILLISECONDS = 2000;
+// http servers
+import 'http-servers/plain-text-server';
+import 'http-servers/html-server';
+import 'http-servers/json-server';
+import 'http-servers/echo-server';
 
-const user = new User();
-const product = new Product();
-const watcher = new DirWatcher();
-const importer = new Importer();
+// run file watchers from previous tasks
+runWatchers();
 
-watcher.watch(PATH_TO_DATA, WATCH_DELAY_MILLISECONDS);
+// Made Server singleton mostly for learning purposes
+class Server {
+    public static getInstance(): Server {
+        if (!this.instance) {
+            this.instance = new Server();
+        }
+        return this.instance;
+    }
 
-watcher.on(DIRECTORY_FILES_CHANGED, changedFiles => {
-    const asyncReadOperations = [];
-    const syncReadResults = [];
+    private static instance: Server | undefined;
 
-    changedFiles.forEach(fileName => {
-        asyncReadOperations.push(importer.import(path.join(PATH_TO_DATA, fileName)));
-        syncReadResults.push(importer.importSync(path.join(PATH_TO_DATA, fileName)));
-    });
+    public app: express.Application;
 
-    Promise.all(asyncReadOperations)
-        .then(data => {
-            data.forEach(csvString => {
-                csvConverter
-                    .convertToJSON(csvString)
-                    .then(csvJSON => console.log('async csvJSON------------>', csvJSON));
-            });
-        })
-        .catch(e => {
-            logger.error(e);
-        });
+    private constructor() {
+        this.app = express();
+        this.configureServer();
+    }
 
-    syncReadResults.forEach(csvString => {
-        csvConverter
-            .convertToJSON(csvString)
-            .then(csvJSON => console.log('sync csvJSON------------>', csvJSON));
-    });
-});
+    private configureServer(): void {
+        this.app.use(queryParser);
+        this.app.use(cookieParser);
+        this.app.use(bodyParser.json());
+        this.app.use(
+            bodyParser.urlencoded({
+                extended: true
+            })
+        );
+        this.configureRoutes();
+        this.app.use(errorHandler());
+    }
+
+    private configureRoutes(): void {
+        const router: express.Router = express.Router();
+        addRoutes(router);
+
+        this.app.use(router);
+    }
+}
+
+const { app } = Server.getInstance();
+
+export default app;
