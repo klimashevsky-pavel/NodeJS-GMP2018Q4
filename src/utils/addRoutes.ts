@@ -1,12 +1,25 @@
 import { Router } from 'express';
-import { productsController, usersController, authController } from 'controllers';
+import { PassportStatic } from 'passport';
+import {
+    productsController,
+    usersController,
+    authController,
+    passportController
+} from 'controllers';
 
-export const addRoutes = (router: Router): void => {
+export const addRoutes = (router: Router, passport: PassportStatic): void => {
     // Authorization
     router.post('/auth', authController.login);
     router.post('/auth/refresh', authController.refreshTokenController);
+    // Passport
+    router.post(
+        '/login/local',
+        passport.authenticate('local'),
+        passportController.successfulLocalStrategyLogin
+    );
     // Products routes
-    router.get('/api/products', authController.verifyToken, productsController.getAllProducts);
+    // removed auth token check for /api/products for checking passport work
+    router.get('/api/products', productsController.getAllProducts);
     router.get(
         '/api/products/:id',
         authController.verifyToken,

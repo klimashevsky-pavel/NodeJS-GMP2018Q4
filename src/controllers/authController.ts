@@ -78,9 +78,10 @@ const refreshTokenController = (req: ExtendedRequest, res: Response) => {
 
 const verifyToken = (req: ExtendedRequest, res: Response, next: () => void) => {
     const authHeader = req.headers[AUTHORIZATION_HEADER_KEY];
-    const token = authHeader.startsWith('Bearer ')
-        ? authHeader.slice(TOKEN_START_INDEX)
-        : authHeader;
+    const token =
+        authHeader && authHeader.startsWith('Bearer ')
+            ? authHeader.slice(TOKEN_START_INDEX)
+            : authHeader;
 
     if (token) {
         jwt.verify(token, config.jwt_secret, err => {

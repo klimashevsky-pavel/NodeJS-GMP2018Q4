@@ -2,7 +2,7 @@ import { Response } from 'express';
 import { ExtendedRequest } from 'interfaces/ExtendedRequest';
 
 const getAllProducts = (req: ExtendedRequest, res: Response) => {
-    res.send('I return all Products!');
+    res.send(`I return all Products! User: ${req.user}`);
 };
 
 const getSingleProduct = (req: ExtendedRequest, res: Response) => {
