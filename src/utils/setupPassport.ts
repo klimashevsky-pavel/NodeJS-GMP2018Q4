@@ -1,4 +1,5 @@
 import { Strategy as LocalStrategy } from 'passport-local';
+import { Strategy as FacebookStrategy } from 'passport-facebook';
 import { find } from 'lodash';
 import users, { User } from 'config/users';
 
@@ -12,6 +13,20 @@ function setupPassport(passport) {
             function(username, password, done) {
                 const userFromDB = find(users, { userName: username, password });
                 userFromDB ? done(null, userFromDB) : done(null, false);
+            }
+        )
+    );
+
+    passport.use(
+        new FacebookStrategy(
+            {
+                clientID: '2237257873251788',
+                clientSecret: 'a5cc1fd744f81f2c0ae81e835799007d',
+                callbackURL: 'http://localhost:8080/login/facebook/callback'
+            },
+            function(accessToken, refreshToken, profile, cb) {
+                console.log('profile----------->', profile);
+                cb(null, {});
             }
         )
     );

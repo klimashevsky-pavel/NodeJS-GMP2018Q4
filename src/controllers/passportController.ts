@@ -5,4 +5,8 @@ const successfulLocalStrategyLogin = (req: ExtendedRequest, res: Response) => {
     res.send(`Successful login for User: ${req.user.userName}`);
 };
 
-export default { successfulLocalStrategyLogin };
+const successfulFacebookStrategyLogin = (req: ExtendedRequest, res: Response) => {
+    res.send(`Successful Facebook login`);
+};
+
+export default { successfulLocalStrategyLogin, successfulFacebookStrategyLogin };

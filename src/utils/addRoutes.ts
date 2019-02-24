@@ -17,6 +17,9 @@ export const addRoutes = (router: Router, passport: PassportStatic): void => {
         passport.authenticate('local'),
         passportController.successfulLocalStrategyLogin
     );
+
+    router.get('/login/facebook', passport.authenticate('facebook'));
+    router.get('/login/facebook/callback', passportController.successfulFacebookStrategyLogin);
     // Products routes
     // removed auth token check for /api/products for checking passport work
     router.get('/api/products', productsController.getAllProducts);
