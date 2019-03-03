@@ -1,10 +1,13 @@
 import * as express from 'express';
 import * as bodyParser from 'body-parser';
+import session from 'express-session';
 import errorHandler from 'errorhandler';
+import passport, { PassportStatic } from 'passport';
 import runWatchers from 'utils/runWatcher';
 import { addRoutes } from 'utils/addRoutes';
 import { queryParser } from 'middlewares/queryParser';
 import { cookieParser } from 'middlewares/cookieParser';
+import { setupPassport } from 'utils/setupPassport';
 
 // http servers
 import 'http-servers/plain-text-server';
@@ -42,13 +45,23 @@ class Server {
                 extended: true
             })
         );
-        this.configureRoutes();
+        this.app.use(
+            session({
+                secret: 'keyboard cat',
+                resave: false,
+                saveUninitialized: false
+            })
+        );
+        setupPassport(passport);
+        this.app.use(passport.initialize());
+        this.app.use(passport.session());
+        this.configureRoutes(passport);
         this.app.use(errorHandler());
     }
 
-    private configureRoutes(): void {
+    private configureRoutes(passportModule: PassportStatic): void {
         const router: express.Router = express.Router();
-        addRoutes(router);
+        addRoutes(router, passportModule);
 
         this.app.use(router);
     }
