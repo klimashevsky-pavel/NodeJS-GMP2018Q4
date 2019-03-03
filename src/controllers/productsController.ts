@@ -1,20 +1,33 @@
 import { Response } from 'express';
 import { ExtendedRequest } from 'interfaces/ExtendedRequest';
+import { db } from 'db';
 
 const getAllProducts = (req: ExtendedRequest, res: Response) => {
-    res.send(`I return all Products! User: ${req.user}`);
+    db.Product.findAll().then(products => {
+        res.status(200).json({ products });
+    });
 };
 
 const getSingleProduct = (req: ExtendedRequest, res: Response) => {
-    res.send(`I return Product with id: ${req.params.id}`);
+    db.Product.findById(req.params.id).then(product => {
+        res.status(200).json({ product });
+    });
 };
 
 const getSingleProductReviews = (req: ExtendedRequest, res: Response) => {
-    res.send(`I return all reviews for Product with id: ${req.params.id}`);
+    db.Product.findById(req.params.id).then(product => {
+        res.status(200).json({ reviews: product.reviews });
+    });
 };
 
 const addProduct = (req: ExtendedRequest, res: Response) => {
-    res.send(`I add new Product. Body: ${req.body}`);
+    db.Product.create(req.body)
+        .then(result => {
+            res.send(`New Product Successfully added: ${result}`);
+        })
+        .catch(() => {
+            res.send('Incorrect data provided');
+        });
 };
 
 export default {

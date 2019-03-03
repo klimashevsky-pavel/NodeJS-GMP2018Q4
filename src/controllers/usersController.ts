@@ -1,12 +1,11 @@
 import { Response } from 'express';
 import { ExtendedRequest } from 'interfaces/ExtendedRequest';
+import { db } from 'db';
 
 const getAllUsers = (req: ExtendedRequest, res: Response) => {
-    // set cookie for cookie parser testing
-    res.cookie('name1', 'value1');
-    res.cookie('name2', 'value2');
-    const stringifiedCookies = JSON.stringify(req.parsedCookies);
-    res.send(`I return all Users! And look at your cookies: ${stringifiedCookies}`);
+    db.User.findAll().then(users => {
+        res.status(200).json({ users });
+    });
 };
 
 export default { getAllUsers };

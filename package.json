@@ -50,6 +50,7 @@
     "@types/passport": "^1.0.0",
     "@types/passport-facebook": "^2.1.8",
     "@types/passport-local": "^1.0.33",
+    "@types/sequelize": "^4.27.38",
     "@types/uuid": "^3.4.4",
     "app-module-path": "^2.2.0",
     "body-parser": "^1.18.3",
@@ -65,6 +66,10 @@
     "passport": "^0.4.0",
     "passport-facebook": "^3.0.0",
     "passport-local": "^1.0.0",
+    "pg": "^7.8.1",
+    "pg-hstore": "^2.3.2",
+    "sequelize": "^4.43.0",
+    "sequelize-cli": "^5.4.0",
     "through2": "^3.0.0",
     "uuid": "^3.3.2",
     "winston": "^3.1.0"
