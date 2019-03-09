@@ -20,7 +20,7 @@ const formTokenDataObject = (userName: string) => {
     const refreshToken = uuid();
     const secret = config.jwt_secret;
     return {
-        token: jwt.sign({ userName }, secret, { expiresIn: '20000ms' }),
+        token: jwt.sign({ userName }, secret, { expiresIn: '200000ms' }),
         refreshToken
     };
 };
