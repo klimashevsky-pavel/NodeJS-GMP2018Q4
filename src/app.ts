@@ -3,8 +3,6 @@ import * as bodyParser from 'body-parser';
 import session from 'express-session';
 import errorHandler from 'errorhandler';
 import passport, { PassportStatic } from 'passport';
-import { db } from 'db';
-import { initialImportToDb } from 'utils/initialImportToDb';
 import runWatchers from 'utils/runWatcher';
 import { addRoutes } from 'utils/addRoutes';
 import { queryParser } from 'middlewares/queryParser';
@@ -39,8 +37,6 @@ class Server {
     }
 
     private configureServer(): void {
-        db.sequelize.sync();
-        initialImportToDb(db);
         this.app.use(queryParser);
         this.app.use(cookieParser);
         this.app.use(bodyParser.json());
