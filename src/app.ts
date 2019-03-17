@@ -14,6 +14,7 @@ import 'http-servers/plain-text-server';
 import 'http-servers/html-server';
 import 'http-servers/json-server';
 import 'http-servers/echo-server';
+import 'http-servers/mongo-server';
 
 // run file watchers from previous tasks
 runWatchers();

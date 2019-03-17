@@ -1,4 +1,6 @@
 {
     "name": "Node.js Homework Application",
-    "jwt_secret": "supersecret"
+    "jwt_secret": "supersecret",
+    "mongoDB_dbName": "nodejs-mentoring_test",
+    "mongoDB_connectionURL": "mongodb://localhost:27017"
 }
