@@ -1,11 +1,23 @@
 import { Response } from 'express';
 import { ExtendedRequest } from 'interfaces/ExtendedRequest';
-import { getAllUsersFromDb } from 'db/interactionsWithDB';
+import { getUsersFromMongo, removeProductFromMongo } from 'db/interactionsWithMongo';
+import logger from '../../logger';
 
 const getAllUsers = (req: ExtendedRequest, res: Response) => {
-    getAllUsersFromDb().then(users => {
+    getUsersFromMongo().then(users => {
         res.status(200).json({ users });
     });
 };
 
-export default { getAllUsers };
+const removeUser = (req: ExtendedRequest, res: Response) => {
+    removeProductFromMongo(req.params.id)
+        .then(() => {
+            res.send(`User was successfully deleted`);
+        })
+        .catch((e: Error) => {
+            res.send('Incorrect data provided');
+            logger.error(e);
+        });
+};
+
+export default { getAllUsers, removeUser };
